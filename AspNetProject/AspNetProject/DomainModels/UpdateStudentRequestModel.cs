@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace StudentAdminPortal.API.DomainModels
+﻿namespace StudentAdminPortal.API.DomainModels
 {
-    public class UpdateStudentRequest
+    public class UpdateStudentRequestModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

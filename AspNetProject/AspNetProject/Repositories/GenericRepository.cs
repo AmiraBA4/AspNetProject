@@ -37,7 +37,7 @@ namespace StudentAdminPortal.API.Repositories
             return await context.Set<T>().FindAsync(id);
         }
 
-        public T GetFirstOrDefault(
+        public async Task<T> GetFirstOrDefault(
         Expression<Func<T, bool>> predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
@@ -59,15 +59,15 @@ namespace StudentAdminPortal.API.Repositories
             }
             if (orderBy != null)
             {
-                return orderBy(query).FirstOrDefault();
+                return await orderBy(query).FirstOrDefaultAsync();
             }
             else
             {
-                return query.FirstOrDefault();
+                return await query.FirstOrDefaultAsync();
             }
         }
       
-        public virtual IEnumerable<T> GetMuliple(
+        public async Task<IEnumerable<T>> GetMuliple(
         Expression<Func<T, bool>> predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
@@ -89,11 +89,11 @@ namespace StudentAdminPortal.API.Repositories
             }
             if (orderBy != null)
             {
-                return orderBy(query).ToList();
+                return await orderBy(query).ToListAsync();
             }
             else
             {
-                return query.ToList();
+                return await query.ToListAsync();
             }
         }
         public bool Exists(Expression<Func<T, bool>> predicate)
@@ -110,9 +110,9 @@ namespace StudentAdminPortal.API.Repositories
             context.Set<T>().Remove(entityToDelete);
         }
         public virtual void Delete(IEnumerable<T> entities) => context.Set<T>().RemoveRange(entities);
-        public T Delete(object id)
+        public async Task<T> Delete(object id)
         {
-            var entityToDelete = context.Set<T>().Find(id);
+            var entityToDelete = await context.Set<T>().FindAsync(id);
             if (entityToDelete != null)
             {
                 context.Set<T>().Remove(entityToDelete);

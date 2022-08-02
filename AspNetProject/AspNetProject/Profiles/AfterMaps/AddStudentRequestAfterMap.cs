@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace StudentAdminPortal.API.Profiles.AfterMaps
 {
-    public class AddStudentRequestAfterMap : IMappingAction<AddStudentRequest, DataModels.Student>
+    public class AddStudentRequestAfterMap : IMappingAction<AddStudentRequestModel, DataModels.Student>
     {
-        public void Process(AddStudentRequest source, DataModels.Student destination, ResolutionContext context)
+        public void Process(AddStudentRequestModel source, DataModels.Student destination, ResolutionContext context)
         {
             destination.Id = Guid.NewGuid();
             destination.Address = new DataModels.Address()

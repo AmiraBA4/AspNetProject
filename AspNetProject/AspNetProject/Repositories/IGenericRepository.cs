@@ -38,7 +38,7 @@ namespace StudentAdminPortal.API.Repositories
         /// <param name="disableTracking">A boolean to disable entities changing tracking.</param>
         /// <returns>The first element satisfying the condition.</returns>
         /// <remarks>This method default no-tracking query.</remarks>
-        T GetFirstOrDefault(
+        Task<T> GetFirstOrDefault(
             Expression<Func<T, bool>> predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
@@ -53,7 +53,7 @@ namespace StudentAdminPortal.API.Repositories
         /// <param name="disableTracking">A boolean to disable entities changing tracking.</param>
         /// <returns>A list of elements satisfying the condition.</returns>
         /// <remarks>This method default no-tracking query.</remarks>
-        IEnumerable<T> GetMuliple(
+        Task<IEnumerable<T>> GetMuliple(
            Expression<Func<T, bool>> predicate = null,
            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
@@ -79,7 +79,7 @@ namespace StudentAdminPortal.API.Repositories
         /// Deletes the entity by the specified primary key.
         /// </summary>
         /// <param name="id">The primary key value.</param>
-        T Delete(object id);
+        Task<T> Delete(object id);
         /// <summary>
         /// Deletes the specified entity.
         /// </summary>

@@ -31,7 +31,7 @@ namespace StudentAdminPortal.API.Controllers
                 return NotFound();
             }
 
-            return Ok(mapper.Map<List<Gender>>(genderList));
+            return Ok(mapper.Map<List<GenderModel>>(genderList));
         }
     }
 }

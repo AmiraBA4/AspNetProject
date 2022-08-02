@@ -2,7 +2,7 @@
 
 namespace StudentAdminPortal.API.DomainModels
 {
-    public class Student
+    public class StudentModel
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
@@ -12,7 +12,7 @@ namespace StudentAdminPortal.API.DomainModels
         public long Mobile { get; set; }
         public string ProfileImageUrl { get; set; }
         public Guid GenderId { get; set; }
-        public Gender Gender { get; set; }
-        public Address Address { get; set; }
+        public GenderModel Gender { get; set; }
+        public AddressModel Address { get; set; }
     }
 }

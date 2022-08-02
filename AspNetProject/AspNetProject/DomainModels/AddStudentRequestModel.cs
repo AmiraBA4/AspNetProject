@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace StudentAdminPortal.API.DomainModels
 {
-    public class AddStudentRequest
+    public class AddStudentRequestModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
