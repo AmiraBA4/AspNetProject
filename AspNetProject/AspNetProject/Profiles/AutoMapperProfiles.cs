@@ -10,6 +10,8 @@ namespace StudentAdminPortal.API.Profiles
         public AutoMapperProfiles()
         {
             CreateMap<DataModels.Student, Student>()
+                .ForMember(x => x.Gender, opt => opt.MapFrom(src => src.Gender))
+                 .ForMember(x => x.Address, opt => opt.MapFrom(src => src.Address))
                 .ReverseMap();
 
             CreateMap<DataModels.Gender, Gender>()

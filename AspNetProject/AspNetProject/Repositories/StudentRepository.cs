@@ -1,18 +1,12 @@
-﻿using StudentAdminPortal.API.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentAdminPortal.API.DataModels;
 
 namespace StudentAdminPortal.API.Repositories
 {
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository : GenericRepository<Student>, IStudentRepository
     {
-        private readonly StudentAdminContext context;
-        public StudentRepository(StudentAdminContext context)
+        public StudentRepository(StudentAdminContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<List<Student>> GetStudentsAsync()
@@ -22,9 +16,7 @@ namespace StudentAdminPortal.API.Repositories
 
         public async Task<Student> GetStudentAsync(Guid studentId)
         {
-            return await context.Student
-                .Include(nameof(Gender)).Include(nameof(Address))
-                .FirstOrDefaultAsync(x => x.Id == studentId);
+            return await context.Student.Include(nameof(Gender)).Include(nameof(Address)).FirstOrDefaultAsync(x => x.Id == studentId);
         }
 
         public async Task<List<Gender>> GetGendersAsync()
@@ -32,10 +24,10 @@ namespace StudentAdminPortal.API.Repositories
             return await context.Gender.ToListAsync();
         }
 
-        public async Task<bool> Exists(Guid studentId)
-        {
-            return await context.Student.AnyAsync(x => x.Id == studentId);
-        }
+        //public async Task<bool> Exists(Guid studentId)
+        //{
+        //    return await context.Student.AnyAsync(x => x.Id == studentId);
+        //}
 
         public async Task<Student> UpdateStudent(Guid studentId, Student request)
         {

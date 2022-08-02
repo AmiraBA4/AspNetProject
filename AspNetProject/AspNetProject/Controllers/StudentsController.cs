@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using AspNetProject.UOW;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentAdminPortal.API.DomainModels;
 using StudentAdminPortal.API.Repositories;
 using System;
@@ -13,34 +15,35 @@ namespace StudentAdminPortal.API.Controllers
     [ApiController]
     public class StudentsController : Controller
     {
-        private readonly IStudentRepository studentRepository;
+        //private readonly IStudentRepository studentRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IImageRepository imageRepository;
 
-        public StudentsController(IStudentRepository studentRepository, IMapper mapper,
+        public StudentsController(IUnitOfWork unitOfWork, IMapper mapper,
             IImageRepository imageRepository)
         {
-            this.studentRepository = studentRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.imageRepository = imageRepository;
         }
 
         [HttpGet]
         [Route("[controller]")]
-        public async Task<IActionResult> GetAllStudentsAsync()
+        public IActionResult GetAllStudentsAsync()
         {
-            var students = await studentRepository.GetStudentsAsync();
+            var students =  unitOfWork.Student.GetMuliple(null,null, x => x.Include(g => g.Gender).Include(a => a.Address),true); 
 
             return Ok(mapper.Map<List<Student>>(students));
         }
 
         [HttpGet]
         [Route("[controller]/{studentId:guid}"), ActionName("GetStudentAsync")]
-        public async Task<IActionResult> GetStudentAsync([FromRoute] Guid studentId)
+        public  IActionResult GetStudentAsync([FromRoute] Guid studentId)
         {
             // Fetch Student Details
-            var student = await studentRepository.GetStudentAsync(studentId);
-
+            var student =  unitOfWork.Student.GetFirstOrDefault(s=>s.Id == studentId, null, x => x.Include(g => g.Gender).Include(a=>a.Address), true);
+            
             // Return Student
             if (student == null)
             {
@@ -50,30 +53,31 @@ namespace StudentAdminPortal.API.Controllers
             return Ok(mapper.Map<Student>(student));
         }
 
-        [HttpPut]
-        [Route("[controller]/{studentId:guid}")]
-        public async Task<IActionResult> UpdateStudentAsync([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
-        {
-            if (await studentRepository.Exists(studentId))
-            {
-                // Update Details
-                var updatedStudent = await studentRepository.UpdateStudent(studentId, mapper.Map<DataModels.Student>(request));
+        //[HttpPut]
+        //[Route("[controller]/{studentId:guid}")]
+        //public async Task<IActionResult> UpdateStudentAsync([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
+        //{
+        //    if (await studentRepository.Exists(studentId))
+        //    {
+        //        // Update Details
+        //        var updatedStudent = await studentRepository.UpdateStudent(studentId, mapper.Map<DataModels.Student>(request));
 
-                if (updatedStudent != null)
-                {
-                    return Ok(mapper.Map<Student>(updatedStudent));
-                }
-            }
-            return NotFound();
-        }
+        //        if (updatedStudent != null)
+        //        {
+        //            return Ok(mapper.Map<Student>(updatedStudent));
+        //        }
+        //    }
+        //    return NotFound();
+        //}
 
         [HttpDelete]
         [Route("[controller]/{studentId:guid}")]
-        public async Task<IActionResult> DeleteStudentAsync([FromRoute] Guid studentId)
+        public IActionResult DeleteStudentAsync([FromRoute] Guid studentId)
         {
-            if (await studentRepository.Exists(studentId))
+            if (unitOfWork.Student.Exists(x => x.Id == studentId))
             {
-                var student = await studentRepository.DeleteStudent(studentId);
+                var student =  unitOfWork.Student.Delete(studentId);
+                unitOfWork.Save();
                 return Ok(mapper.Map<Student>(student));
             }
 
@@ -84,7 +88,7 @@ namespace StudentAdminPortal.API.Controllers
         [Route("[controller]/Add")]
         public async Task<IActionResult> AddStudentAsync([FromBody] AddStudentRequest request)
         {
-            var student = await studentRepository.AddStudent(mapper.Map<DataModels.Student>(request));
+            var student = await unitOfWork.Student.AddStudent(mapper.Map<DataModels.Student>(request));
             return CreatedAtAction(nameof(GetStudentAsync), new { studentId = student.Id },
                 mapper.Map<Student>(student));
         }
@@ -106,13 +110,13 @@ namespace StudentAdminPortal.API.Controllers
                 var extension = Path.GetExtension(profileImage.FileName);
                 if (validExtensions.Contains(extension))
                 {
-                    if (await studentRepository.Exists(studentId))
+                    if (unitOfWork.Student.Exists(x=>x.Id == studentId))
                     {
                         var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
 
                         var fileImagePath = await imageRepository.Upload(profileImage, fileName);
 
-                        if (await studentRepository.UpdateProfileImage(studentId, fileImagePath))
+                        if (await unitOfWork.Student.UpdateProfileImage(studentId, fileImagePath))
                         {
                             return Ok(fileImagePath);
                         }

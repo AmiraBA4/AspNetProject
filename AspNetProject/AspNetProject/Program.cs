@@ -1,3 +1,4 @@
+using AspNetProject.UOW;
 using Microsoft.EntityFrameworkCore;
 using StudentAdminPortal.API.DataModels;
 using StudentAdminPortal.API.Repositories;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<StudentAdminContext>(options =>
 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IImageRepository, LocalStorageImageRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
