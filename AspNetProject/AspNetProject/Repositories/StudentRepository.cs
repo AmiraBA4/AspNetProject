@@ -66,6 +66,7 @@ namespace StudentAdminPortal.API.Repositories
 
         public async Task<Student> AddStudent(Student request)
         {
+            request.ProfileImageUrl = "Test.jpeg";
             var student = await context.Student.AddAsync(request);
             await context.SaveChangesAsync();
             return student.Entity;

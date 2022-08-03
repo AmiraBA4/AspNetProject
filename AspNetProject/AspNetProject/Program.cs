@@ -22,6 +22,16 @@ builder.Services.AddScoped<IImageRepository, LocalStorageImageRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddCors((options) =>
+{
+    options.AddPolicy("angularApplication", (builder) =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .WithMethods("GET", "POST", "PUT", "DELETE")
+        .WithExposedHeaders("*");
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,7 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseCors("angularApplication");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

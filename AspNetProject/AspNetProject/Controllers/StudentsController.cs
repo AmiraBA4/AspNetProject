@@ -42,7 +42,8 @@ namespace StudentAdminPortal.API.Controllers
             return Ok(mapper.Map<List<StudentModel>>(students));
         }
 
-        [HttpGet("GetStudentAsync/{studentId:guid}")]
+        [HttpGet]
+        [Route("GetStudentAsync/{studentId:guid}"), ActionName("GetStudentAsync")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
