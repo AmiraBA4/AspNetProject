@@ -1,13 +1,16 @@
 using AspNetProject.UOW;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using StudentAdminPortal.API.DataModels;
 using StudentAdminPortal.API.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,8 +35,7 @@ builder.Services.AddCors((options) =>
         .WithExposedHeaders("*");
     });
 });
-var app = builder.Build();
-
+var app = builder.Build(); 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -42,6 +44,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("angularApplication");
+
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Resources")),
+    RequestPath = "/Resources"
+});
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
